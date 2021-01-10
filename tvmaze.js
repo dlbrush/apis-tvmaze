@@ -19,7 +19,7 @@ async function searchShows(query) {
   return createShowArray(response);
 }
 
-//Accepts API response data containing an array of show data and returns an array of objects with only the info we need
+//Accepts API response data containing an array of show data and returns an array of objects with only the id, name, summary and image properties
 function createShowArray(response) {
   const showArray = [];
 
