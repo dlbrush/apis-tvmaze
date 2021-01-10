@@ -51,7 +51,7 @@ function populateShows(shows) {
   const $showsList = $("#shows-list");
   $showsList.empty();
 
-  if (shows.length === 0) {
+  if (!shows.length) {
     $showsList.append('<p>No shows found with that term.</p>');
   }
 
@@ -69,15 +69,23 @@ function populateShows(shows) {
        </div>
       `);
 
-    $item.on('click', 'button', async function showEpisodes(event) {
-      $("#episodes-area").show();
-      const id = $(event.target).closest('[data-show-id]').data('show-id');
-      const episodes = await getEpisodes(id);
-      populateEpisodes(episodes);
-    }); 
+    $item.on('click', 'button', showEpisodes); 
 
     $showsList.append($item);
   }
+}
+
+//The onClick event for the Episodes button on a show card
+async function showEpisodes(event) {
+  //Reveal the Episodes area
+  $("#episodes-area").show();
+
+  //Get the show ID from the closest container element with the show id data
+  const id = $(event.target).closest('[data-show-id]').data('show-id');
+
+  //Get episodes from API and populate the episode section with the episode list
+  const episodes = await getEpisodes(id);
+  populateEpisodes(episodes);
 }
 
 
@@ -85,8 +93,7 @@ function populateShows(shows) {
  *    - hide episodes area
  *    - get list of matching shows and show in shows list
  */
-
-$("#search-form").on("submit", async function handleSearch (evt) {
+async function handleSearch (evt) {
   evt.preventDefault();
 
   let query = $("#search-query").val();
@@ -97,7 +104,7 @@ $("#search-form").on("submit", async function handleSearch (evt) {
   let shows = await searchShows(query);
 
   populateShows(shows);
-});
+}
 
 
 /** Given a show ID, return list of episodes:
@@ -133,3 +140,5 @@ function populateEpisodes(episodes) {
     }
   }
 }
+
+$("#search-form").on("submit", handleSearch);
