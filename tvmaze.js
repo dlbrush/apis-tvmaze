@@ -49,18 +49,18 @@ function populateShows(shows) {
   $showsList.empty();
 
   if (!shows.length) {
-    $showsList.append('<p>No shows found with that term.</p>');
+    $showsList.append('<p class="ml-3">No shows found with that term.</p>');
   }
 
   for (let show of shows) {
     let $item = $(
-      `<div class="col-md-6 col-lg-3 Show" data-show-id="${show.id}">
+      `<div class="col-md-6 col-lg-3 my-2 Show" data-show-id="${show.id}">
          <div class="card" data-show-id="${show.id}">
           <img class="card-img-top" src="${show.image}">
            <div class="card-body">
              <h5 class="card-title">${show.name}</h5>
              <p class="card-text">${show.summary}</p>
-             <button class="btn btn-primary">Episodes</button>
+             <button class="btn btn-primary" data-toggle="modal" data-target="#episodes-area">Episodes</button>
            </div>
          </div>
        </div>
@@ -72,10 +72,9 @@ function populateShows(shows) {
   }
 }
 
-//When a user clicks the Episodes button, show the episodes for the card that was clicked
+//When a user clicks the Episodes button, clear any existing episodes then show the episodes for the card that was clicked
 async function showEpisodes(event) {
-  //Reveal the Episodes area
-  $("#episodes-area").show();
+  $('#episodes-list').empty()
 
   //Get the show ID from the closest container element with the show id data
   const id = $(event.target).closest('[data-show-id]').data('show-id');
@@ -96,11 +95,10 @@ async function handleSearch (evt) {
   let query = $("#search-query").val();
   if (!query) return;
 
-  $("#episodes-area").hide();
-
   let shows = await searchShows(query);
 
   populateShows(shows);
+  $("#shows-query").val("");
 }
 
 
@@ -132,13 +130,12 @@ function createEpisodeArray(response) {
 the episodes-list with a list of episodes for a given show*/
 function populateEpisodes(episodes) {
   const $list = $('#episodes-list');
-  $list.empty();
 
   if (episodes.length === 0) {
     $list.append('<li>No episodes found</li>');
   } else {
     for (let episode of episodes) {
-      $list.append(`<li>${episode.name} (season ${episode.season}, episode ${episode.number})</li>`);
+      $list.append(`<li>${episode.name} (Season ${episode.season}, Episode ${episode.number})</li>`);
     }
   }
 }
