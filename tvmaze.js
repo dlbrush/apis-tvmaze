@@ -13,13 +13,18 @@
       }
  */
 async function searchShows(query) {
-  const shows = [];
-
   const response = await axios.get('http://api.tvmaze.com/search/shows',
     {params: {q: query}});
 
+  return createShowArray(response);
+}
+
+//Accepts API response data containing an array of show data and returns an array of objects with only the info we need
+function createShowArray(response) {
+  const showArray = [];
+
   for (let item of response.data) {
-    //Pull only what we need from the show data
+    //Pull the keys we need from the show data
     const {id, name, summary} = item.show;
 
     //Set a default image, and assign to API image only if there is one
@@ -30,18 +35,15 @@ async function searchShows(query) {
 
     //Add all properties to the object and push to the show array
     const showObj = {id, name, summary, image};
-    shows.push(showObj);
+    showArray.push(showObj);
   }
 
-  return shows;
+  return showArray;
 }
-
-
 
 /** Populate shows list:
  *     - given list of shows, add shows to DOM
- */
-
+ */ 
 function populateShows(shows) {
   const $showsList = $("#shows-list");
   $showsList.empty();
@@ -70,7 +72,7 @@ function populateShows(shows) {
   }
 }
 
-//The onClick event for the Episodes button on a show card
+//When a user clicks the Episodes button, show the episodes for the card that was clicked
 async function showEpisodes(event) {
   //Reveal the Episodes area
   $("#episodes-area").show();
@@ -109,6 +111,11 @@ async function handleSearch (evt) {
 async function getEpisodes(id) {
   const response = await axios.get(`http://api.tvmaze.com/shows/${id}/episodes`);
 
+  return createEpisodeArray(response);
+}
+
+//Given episode API response data, create an array of objects with just the id, name, season, and number properties
+function createEpisodeArray(response) {
   const episodes = []
 
   //for each episode in the response, pull the data we want, add it to an object and add the object to the array
