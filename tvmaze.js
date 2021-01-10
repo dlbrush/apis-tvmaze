@@ -1,8 +1,3 @@
-/** Given a query string, return array of matching shows:
- *     { id, name, summary, episodesUrl }
- */
-
-
 /** Search Shows
  *    - given a search term, search for tv shows that
  *      match that query.  The function is async so it
