@@ -131,10 +131,6 @@ describe('populateShows adds items to the show list when a query returns results
     });
 });
 
-describe('showEpisodes finds the ID of the show that we want to get episodes for and creates a list item for each episode if there are any', function() {
-
-});
-
 describe('getEpisodes takes a show ID, makes a call to the API for episode data, and returns an array of episode objects', function() {
     it('Returns a promise when not used asynchronously', function() {
         expect(getEpisodes(7787878787)).toBeInstanceOf(Promise);
