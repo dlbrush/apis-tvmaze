@@ -23,6 +23,25 @@ const showAPIData = {
     ]
 };
 
+const episodeAPIData = {
+    data: [
+        {
+            id: 1,
+            name: 'Pilot',
+            season: 1,
+            number: 1,
+            wonEmmy: false
+        },
+        {
+            id: 2,
+            name: 'The Big Day',
+            season: 1,
+            number: 2,
+            wonEmmy: true
+        }
+    ]
+}
+
 describe('searchShows takes a query and returns an array of show data objects', function() {
 
     it('Returns an array of objects when a query matches shows', async function() {
@@ -109,5 +128,66 @@ describe('populateShows adds items to the show list when a query returns results
 
     afterEach(function() {
         $('#shows-list').empty();
+    });
+});
+
+describe('showEpisodes finds the ID of the show that we want to get episodes for and creates a list item for each episode if there are any', function() {
+
+});
+
+describe('getEpisodes takes a show ID, makes a call to the API for episode data, and returns an array of episode objects', function() {
+    it('Returns a promise when not used asynchronously', function() {
+        expect(getEpisodes(7787878787)).toBeInstanceOf(Promise);
+    });
+
+    it('Returns an array of objects when the show has episodes', async function() {
+        const result = await getEpisodes(1);
+        expect(result).toBeInstanceOf(Array);
+        expect(result[0]).toBeInstanceOf(Object);
+    });
+
+    it('Returns an empty array when the query does not return any episodes', async function() {
+        const result = await searchShows(7777777777);
+        expect(result).toBeInstanceOf(Array);
+        expect(result.length).toEqual(0);
+    });
+});
+
+describe('createEpisodeArray takes an API response of episode data and returns an array with an object for each episode with the properties id, name, season, and number', function() {
+
+    it('Returns an array of objects from API data', function() {
+        expect(createEpisodeArray(episodeAPIData)).toBeInstanceOf(Array);
+        expect(createEpisodeArray(episodeAPIData)[0]).toBeInstanceOf(Object);
+    });
+
+    it('Each episode object has only name, number, season and id properties', function() {
+        expect(createEpisodeArray(episodeAPIData)[0].hasOwnProperty('name')).toBe(true);
+        expect(createEpisodeArray(episodeAPIData)[1].hasOwnProperty('number')).toBe(true);
+        expect(createEpisodeArray(episodeAPIData)[0].hasOwnProperty('season')).toBe(true);
+        expect(createEpisodeArray(episodeAPIData)[1].hasOwnProperty('id')).toBe(true);
+        expect(createEpisodeArray(episodeAPIData)[0].hasOwnProperty('wonEmmy')).toBe(false);
+    });
+});
+
+describe('populateEpisodes creates a list item for each episode in an array of episode objects and appends it to the episode list', function() {
+
+    it('Creates li elements equal to the number of episodes in the array', function() {
+        populateEpisodes(createEpisodeArray(episodeAPIData));
+        expect($('#episodes-list').children().length).toBe(2);
+    })
+
+    it('Creates li elements with text in the format of Name (Season X, Episode Y)', function() {
+        populateEpisodes(createEpisodeArray(episodeAPIData));
+        expect($('#episodes-list').children().eq(0).text()).toBe('Pilot (Season 1, Episode 1)');
+        expect($('#episodes-list').children().eq(1).text()).toBe('The Big Day (Season 1, Episode 2)');
+    })
+
+    it('Appends a message if there are no episodes in the array', function(){
+        populateEpisodes([]);
+        expect($('#episodes-list').children().eq(0).text()).toBe('No episodes found');
+    });
+
+    afterEach(function() {
+        $('#episodes-list').empty();
     });
 });
